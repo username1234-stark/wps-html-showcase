@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WPS PDF for Mac — All-in-One PDF Solution</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --wps-red: #EE3F3F;
+    --ink: #1D1D1F;
+    --ink-2: #333333;
+    --ink-3: #6E6E73;
+    --ink-4: #86868B;
+    --bg-1: #FFFFFF;
+    --bg-2: #F5F5F7;
+    --bg-dark: #1D1D1F;
+    --line: rgba(29, 29, 31, 0.08);
+    --line-2: rgba(29, 29, 31, 0.1);
+    --line-dark: rgba(255, 255, 255, 0.12);
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --asset: './assets';
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font);
+    background: var(--bg-1);
+    color: var(--ink);
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; }
+  button { font-family: inherit; }
+
+  /* =========================================================
+     NAV (Figma 1:849) — 64px tall, backdrop-blur
+     ========================================================= */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: 64px;
+    background: rgba(251, 251, 253, 0.72);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  }
+  .nav-inner {
+    max-width: 1792px; height: 100%;
+    margin: 0 auto; padding: 0 64px;
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+  }
+
+  /* WPS horizontal brand logo (nav uses single horizontal SVG) */
+  .nav-brand { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); }
+  .nav .nav-brand { justify-self: start; }
+  .nav-logo { height: 24px; width: auto; display: block; }
+  /* Mark/text styles kept for footer brand */
+  .nav-brand-mark { width: 24px; height: 24px; display: block; }
+  .nav-brand-text { font-family: var(--font); font-weight: 700; font-size: 16px; letter-spacing: -0.01em; color: var(--ink); }
+
+  .nav-links { justify-self: center; display: flex; align-items: center; gap: 16px; }
+  .nav-links a {
+    padding: 8px; font-size: 14px; font-weight: 400; line-height: 22px; color: #000;
+    border-radius: 8px; transition: background .2s;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .nav-links a.strong { font-weight: 500; }
+  .nav-links a:hover { background: rgba(0,0,0,0.04); }
+  .nav-links .caret {
+    width: 16px; height: 16px; opacity: .7;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'><path d='M4 6l4 4 4-4' stroke='%23000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-size: contain; background-repeat: no-repeat; background-position: center;
+  }
+  .nav-links a.ai {
+    background-image: linear-gradient(180deg, #956AFF 0%, #FF2B37 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+    font-weight: 500;
+    position: relative; padding-right: 18px;
+  }
+  .nav-links a.ai::after {
+    content: ''; position: absolute; right: 6px; top: 8px;
+    width: 8px; height: 8px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' fill='none'><path d='M4 0L5 3L8 4L5 5L4 8L3 5L0 4L3 3Z' fill='%23FF2B37'/></svg>");
+    background-size: contain; background-repeat: no-repeat;
+  }
+
+  .nav-right { justify-self: end; display: flex; align-items: center; gap: 16px; }
+  .nav-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 8px 16px; border-radius: 8px;
+    font-size: 14px; font-weight: 600; line-height: 22px; transition: all .2s;
+  }
+  .nav-btn.primary { background: var(--ink-2); color: #fff; }
+  .nav-btn.primary:hover { background: #000; }
+  .nav-btn.ghost { color: var(--ink); border: 1px solid var(--ink-2); background: transparent; }
+  .nav-btn.ghost:hover { background: rgba(0,0,0,0.04); }
+
+  /* =========================================================
+     Containers
+     ========================================================= */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .container-wide { max-width: 1456px; margin: 0 auto; padding: 0 32px; }
+
+  /* =========================================================
+     Typography
+     ========================================================= */
+  .eyebrow {
+    font-size: 14px; font-weight: 600; line-height: 20px;
+    color: var(--wps-red); letter-spacing: 2px; text-transform: uppercase;
+  }
+  .heading-1 {
+    font-size: 88px; font-weight: 800; line-height: 88px;
+    color: var(--ink); letter-spacing: -0.02em;
+  }
+  .heading-2 {
+    font-size: 64px; font-weight: 800; line-height: 72px;
+    color: var(--ink); letter-spacing: -0.02em;
+  }
+  .heading-2 .red { color: var(--wps-red); }
+  .lead {
+    font-size: 20px; font-weight: 400; line-height: 1.5; color: var(--ink-3);
+  }
+  .note {
+    font-size: 14px; font-weight: 400; line-height: 20px; color: var(--ink-4);
+  }
+  .red-gradient {
+    background: linear-gradient(148.72deg, #FF6B6B 0%, #EE3F3F 40%, #B91C1C 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+  }
+
+  /* =========================================================
+     CTA Buttons
+     ========================================================= */
+  .cta {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    width: 320px; height: 60px; border-radius: 999px;
+    font-size: 20px; font-weight: 600; line-height: 24px;
+    transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+    cursor: pointer; border: none;
+  }
+  .cta.primary {
+    background: var(--wps-red); color: #fff;
+    /* Figma Link (1:274): drop-shadow 0 10px 15px /30% */
+    box-shadow: 0 10px 15px rgba(238, 63, 63, 0.3);
+  }
+  .cta.primary:hover { transform: translateY(-2px); box-shadow: 0 14px 22px rgba(238, 63, 63, 0.38); }
+  .cta.ghost {
+    border: 1px solid var(--ink); color: var(--ink); background: transparent;
+  }
+  .cta.ghost:hover { background: rgba(0,0,0,0.04); }
+  .cta .cta-apple { width: 24px; height: 24px; }
+
+  /* =========================================================
+     HERO
+     ========================================================= */
+  .hero {
+    position: relative; padding-top: 136px; padding-bottom: 0;
+    /* Figma Section - HERO (1:270) canvas fill */
+    background: #fbfbfd;
+    overflow: hidden;
+  }
+  /* Figma 63:11036 — ribbon graphic (full-bleed: wide viewports must not cap at 1920px + right:0 or a left gap appears) */
+  .hero-bg-ribbon {
+    position: absolute; top: 0; left: 0; right: 0;
+    width: 100%;
+    height: min(900px, 85vh);
+    max-height: 900px;
+    pointer-events: none; z-index: 0;
+  }
+  .hero-bg-ribbon img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: 50% 100%;
+    max-width: none;
+    /* Prefer sharper downscaling when intrinsic > display (Chrome 121+) */
+    image-rendering: high-quality;
+    /* Crisper compositing on Safari / some GPUs when scaled */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+  .hero-inner { text-align: center; position: relative; z-index: 1; }
+  /* Req #5 — 24px between the three text blocks */
+  .hero .eyebrow { margin-bottom: 24px; }
+  .hero h1 { max-width: 1064px; margin: 0 auto 24px; }
+  .hero .lead { max-width: 720px; margin: 0 auto 48px; }
+  .hero .cta { margin-bottom: 20px; }
+  /* Req #5 — 96px between first screen (note) and second module (tool marquee) */
+  .hero .note { margin-bottom: 0; }
+
+  /* Tool marquee */
+  .marquee-wrap {
+    position: relative; z-index: 1;
+    padding: 96px 0 96px; width: 100%;
+  }
+  .marquee-row {
+    display: flex; gap: 20px; width: max-content;
+    will-change: transform;
+  }
+  .marquee-row + .marquee-row { margin-top: 20px; }
+
+  .tool-card {
+    width: 320px; height: 198px; padding: 32px;
+    /* Figma cards: white + 0 4px 16px /6% */
+    background: #fff; border-radius: 32px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    flex-shrink: 0;
+    /* Req #2 — always left-aligned (override any inherited center from hero/final-cta) */
+    text-align: left;
+    transition: transform .35s var(--ease), box-shadow .35s var(--ease);
+    border: none;
+  }
+  .tool-card:hover {
+    background: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+  }
+  .tool-icon {
+    width: 64px; height: 64px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 18px;
+  }
+  .tool-icon img { width: 64px; height: 64px; display: block; }
+  .tool-title { font-size: 24px; font-weight: 700; line-height: 32px; color: var(--ink); margin-bottom: 6px; }
+  .tool-desc  { font-size: 14px; font-weight: 400; line-height: 20px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* =========================================================
+     WHY MAC (Sticky Stack)
+     ========================================================= */
+  .why {
+    background: var(--bg-2);
+    padding: 128px 0;
+  }
+  .why-grid {
+    display: grid; grid-template-columns: 560px 560px;
+    gap: 80px; justify-content: center; align-items: start;
+  }
+  .why-left { position: sticky; top: 128px; }
+  .why-left .eyebrow { margin-bottom: 16px; }
+  .why-left h2 { margin-bottom: 24px; }
+  .why-left .lead { margin-bottom: 48px; }
+
+  .why-list { list-style: none; padding: 0; margin: 0 0 48px; display: flex; flex-direction: column; gap: 8px; }
+  .why-list li {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 16px; font-weight: 500; line-height: 24px; color: var(--ink);
+  }
+  .why-list li img { width: 24px; height: 24px; flex-shrink: 0; }
+
+  .why-right { display: flex; flex-direction: column; gap: 24px; }
+  .feature-card {
+    background: #fff; border-radius: 32px;
+    padding: 48px;
+    position: sticky;
+    transition: box-shadow .4s var(--ease);
+  }
+  .feature-card:hover { box-shadow: 0 20px 60px rgba(0,0,0,0.08); }
+  .feature-card:nth-child(1) { top: 128px; }
+  .feature-card:nth-child(2) { top: 152px; }
+  .feature-card:nth-child(3) { top: 176px; }
+  .feature-card:nth-child(4) { top: 200px; }
+  .feature-icon {
+    width: 64px; height: 64px; display: block; margin-bottom: 24px;
+  }
+  .feature-title { font-size: 32px; font-weight: 700; line-height: 36px; color: var(--ink); margin-bottom: 16px; }
+  .feature-desc  { font-size: 16px; font-weight: 400; line-height: 24px; color: var(--ink-3); }
+
+  /* =========================================================
+     TRUST — dark
+     ========================================================= */
+  .trust {
+    background: var(--bg-dark); color: #fff;
+    padding: 128px 0 96px;
+    text-align: center;
+    overflow: hidden;
+  }
+  .trust .eyebrow { margin-bottom: 24px; }
+  .trust h2 { color: #fff; max-width: 820px; margin: 0 auto 64px; }
+  .trust h2 .white { color: #fff; }
+
+  .trust-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--line-dark);
+    border-bottom: 1px solid var(--line-dark);
+    max-width: 1080px; margin: 0 auto;
+  }
+  .trust-stat {
+    padding: 64px 32px; text-align: center;
+    border-right: 1px solid var(--line-dark);
+  }
+  .trust-stat:last-child { border-right: none; }
+  .trust-num {
+    font-size: 104px; font-weight: 800; line-height: 104px;
+    letter-spacing: -4px;
+    background: linear-gradient(180deg, #FFFFFF 0%, #888888 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+    display: flex; justify-content: center; align-items: baseline;
+  }
+  .trust-num .unit {
+    font-size: 52px; line-height: 52px;
+    color: var(--wps-red);
+    -webkit-text-fill-color: var(--wps-red); color: var(--wps-red);
+    margin-left: 4px;
+  }
+  .trust-label {
+    font-size: 16px; font-weight: 500; line-height: 24px;
+    color: rgba(255,255,255,0.55);
+    margin-top: 24px;
+  }
+  .trust-cta-wrap { margin-top: 96px; }
+
+  /* 3rd-party Logo marquee */
+  .logo-marquee-wrap {
+    margin-top: 96px; padding: 24px 0;
+  }
+  .logo-marquee-row {
+    display: flex; align-items: center; gap: 72px;
+    width: max-content; will-change: transform;
+  }
+  .logo-item {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity .3s;
+  }
+  .logo-item img { height: 90px; width: auto; display: block; }
+  .logo-item:hover { opacity: 0.95; }
+
+  /* =========================================================
+     COMPARE
+     ========================================================= */
+  .compare {
+    background: var(--bg-2);
+    padding: 128px 0;
+  }
+  .compare-inner { text-align: center; max-width: 1200px; margin: 0 auto 64px; padding: 0 32px; }
+  .compare h2 { margin-bottom: 16px; }
+  .compare .lead { margin: 0 auto; }
+
+  .compare-table {
+    position: relative; max-width: 1080px; margin: 0 auto;
+  }
+  /* Req #3 — WPS column highlight: 36px internal spacing above logo and below last check.
+     Head row is 104px tall, logo+text block ~64px tall → natural top offset = 20px.
+     Highlight extends 16px above table top (20 - (-16) = 36px from red box top to logo top).
+     Data rows are 72px tall, check 24px centered → check bottom is 24px above row bottom.
+     Highlight extends 12px below table (24 + 12 = 36px from check bottom to red box bottom). */
+  .compare-highlight {
+    position: absolute;
+    top: -16px; bottom: -12px;
+    left: 32%;
+    margin-left: 8px;
+    margin-right: 8px;
+    width: calc(17% - 16px);
+    background: #fff;
+    border: 1.5px solid var(--wps-red);
+    border-radius: 24px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .compare-row {
+    display: grid; grid-template-columns: 32% 17% 17% 17% 17%;
+    border-bottom: 1px solid var(--line);
+    align-items: center; min-height: 72px;
+    position: relative; z-index: 1;
+  }
+  .compare-row.head { min-height: 104px; border-bottom-color: var(--line); }
+  .compare-row:last-child { border-bottom: none; }
+  .compare-row > div { padding: 16px 8px; text-align: center; display: flex; justify-content: center; align-items: center; }
+  .compare-row > div:first-child {
+    justify-content: flex-start; padding-left: 24px;
+    font-size: 14px; font-weight: 600; line-height: 20px; color: var(--ink);
+  }
+  .compare-row.head > div:first-child {
+    font-size: 13px; font-weight: 600; line-height: 20px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .compare-head-col {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    font-size: 14px; font-weight: 600; line-height: 20px; color: var(--ink-3);
+  }
+  .compare-head-col.wps { color: var(--ink); }
+  /* Req #4 — unified 36px height for all compare logos; width auto so wide logos (Google) render full-size */
+  .compare-head-col img { height: 36px; width: auto; max-width: 140px; object-fit: contain; display: block; }
+
+  .compare-check, .compare-x {
+    width: 24px; height: 24px; border-radius: 999px;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .compare-check { background: var(--wps-red); }
+  .compare-x     { background: rgba(0,0,0,0.08); }
+  .compare-check svg { width: 14px; height: 14px; color: #fff; }
+  .compare-x svg     { width: 12px; height: 12px; color: rgba(0,0,0,.4); }
+  .compare-text {
+    font-size: 14px; font-weight: 400; line-height: 20px; color: var(--ink-3);
+  }
+  .compare-dash { color: var(--ink-4); font-size: 20px; font-weight: 400; }
+
+  .compare-cta-wrap { margin-top: 64px; text-align: center; }
+
+  /* =========================================================
+     TESTIMONIALS
+     ========================================================= */
+  .testi { background: var(--bg-1); padding: 128px 0; }
+  .testi h2 { text-align: center; margin-bottom: 64px; max-width: 873px; margin-left: auto; margin-right: auto; }
+  /* Req #5 — "saying" red */
+  .testi h2 .red { color: var(--wps-red); }
+
+  .testi-grid {
+    display: grid; grid-template-columns: repeat(3, 384px);
+    gap: 24px; justify-content: center;
+  }
+  .testi-card {
+    width: 384px; min-height: 321px;
+    background: var(--bg-2); border-radius: 24px;
+    padding: 32px;
+    display: flex; flex-direction: column;
+    opacity: 0; transform: translateY(16px);
+    transition: opacity .5s var(--ease), transform .5s var(--ease);
+  }
+  .testi-card.in { opacity: 1; transform: translateY(0); }
+  /* Req #5 — remove hover effect */
+  /* (no :hover rule) */
+
+  .testi-stars {
+    color: var(--wps-red); font-size: 16px; letter-spacing: 3px;
+    margin-bottom: 16px; line-height: 21px;
+  }
+  .testi-quote {
+    font-size: 16px; font-weight: 400; line-height: 24px; color: var(--ink);
+    flex: 1;
+  }
+  .testi-author {
+    display: flex; align-items: center; gap: 14px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    margin-top: 24px;
+  }
+  .testi-avatar {
+    width: 44px; height: 44px; border-radius: 22px;
+    overflow: hidden; flex-shrink: 0;
+    background: var(--bg-2);
+  }
+  .testi-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .testi-author-name { font-size: 15px; font-weight: 600; line-height: 21px; color: var(--ink); }
+  .testi-author-role { font-size: 13px; font-weight: 400; line-height: 18px; color: var(--ink-3); }
+
+  .testi-cta-wrap { margin-top: 64px; text-align: center; }
+
+  /* =========================================================
+     FAQ — Req #1: dark color scheme
+     ========================================================= */
+  .faq { background: var(--bg-dark); padding: 128px 0; color: #fff; }
+  .faq h2 { text-align: center; margin-bottom: 64px; max-width: 903px; margin-left: auto; margin-right: auto; color: #fff; }
+  .faq h2 .red { color: var(--wps-red); }
+  .faq-list { max-width: 900px; margin: 0 auto; }
+  .faq-item { border-bottom: 1px solid rgba(255, 255, 255, 0.12); }
+  .faq-q {
+    width: 100%; background: transparent; border: none; cursor: pointer;
+    padding: 28px 0; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    font-family: inherit; font-size: 20px; font-weight: 600; line-height: 26px; color: #fff;
+    text-align: left;
+  }
+  .faq-toggle {
+    width: 32px; height: 32px; border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    flex-shrink: 0; transition: background .2s, transform .3s var(--ease);
+  }
+  .faq-item.open .faq-toggle { background: var(--wps-red); transform: rotate(45deg); }
+  .faq-item.open .faq-toggle svg { color: #fff; }
+  .faq-toggle svg { width: 14px; height: 14px; color: rgba(255, 255, 255, 0.75); transition: color .2s; }
+  .faq-a {
+    max-height: 0; overflow: hidden;
+    transition: max-height .4s var(--ease);
+  }
+  .faq-a-inner {
+    padding: 0 0 32px;
+    font-size: 16px; font-weight: 400; line-height: 24px; color: rgba(255, 255, 255, 0.55);
+    max-width: 780px;
+  }
+
+  /* =========================================================
+     FINAL CTA (Req #6 — rebuilt per design)
+     ========================================================= */
+  .final-cta {
+    background: var(--bg-2);
+    padding: 128px 0 0;
+    text-align: center;
+    overflow: hidden;
+  }
+  .final-cta .wps-mark {
+    width: 96px; height: 96px;
+    margin: 0 auto 32px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .final-cta .wps-mark img { width: 72px; height: 72px; display: block; }
+  .final-cta h2 { margin-bottom: 16px; max-width: 1046px; margin-left: auto; margin-right: auto; }
+  .final-cta .lead { margin-bottom: 64px; }
+  .final-cta-buttons { display: flex; gap: 24px; justify-content: center; margin-bottom: 96px; flex-wrap: wrap; }
+
+  .final-marquee-wrap {
+    padding: 24px 0 48px;
+  }
+  .final-marquee-row {
+    display: flex; gap: 20px; width: max-content; will-change: transform;
+  }
+  /* Final CTA cards are WHITE per design */
+  .final-marquee-row .tool-card { background: #fff; }
+
+  /* =========================================================
+     FOOTER (Figma 1:807 — white)
+     ========================================================= */
+  .footer {
+    background: #fff; color: var(--ink);
+    padding: 64px 0 24px;
+    border-top: 1px solid var(--line);
+  }
+  .footer-inner {
+    max-width: 1200px; margin: 0 auto; padding: 0 64px;
+    display: grid;
+    grid-template-columns: 280px 1fr 1fr 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+  .footer-brand .nav-brand { margin-bottom: 16px; }
+  .footer-brand p {
+    color: rgba(0, 0, 0, 0.6);
+    font-family: var(--font);
+    font-size: 13px; line-height: 22px; font-weight: 500;
+  }
+  .footer-col h4 {
+    font-family: var(--font);
+    font-size: 14px; font-weight: 700; line-height: 22px;
+    color: rgba(0, 0, 0, 0.7);
+    margin-bottom: 16px;
+  }
+  .footer-col a {
+    display: block; font-size: 13px; line-height: 22px; font-weight: 500;
+    color: rgba(0, 0, 0, 0.6); margin-bottom: 8px;
+    transition: color .2s;
+  }
+  .footer-col a:hover { color: var(--ink); }
+
+  .footer-socials { display: flex; gap: 16px; }
+  .footer-socials a {
+    width: 20px; height: 20px; margin-bottom: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: rgba(0,0,0,0.6);
+  }
+  .footer-socials svg { width: 20px; height: 20px; display: block; }
+  .footer-socials a:hover { color: var(--ink); }
+
+  .footer-bottom {
+    max-width: 1200px; margin: 40px auto 0; padding: 0 64px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .footer-lang {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px; border-radius: 8px;
+    background: rgba(0, 0, 0, 0.06);
+    font-size: 13px; font-weight: 500; color: rgba(0, 0, 0, 0.6);
+    width: fit-content;
+  }
+  .footer-lang svg { width: 16px; height: 16px; }
+  .footer-copy {
+    font-size: 12px; font-weight: 500; line-height: 20px;
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  /* =========================================================
+     Responsive
+     ========================================================= */
+  @media (max-width: 1200px) {
+    .why-grid { grid-template-columns: 1fr 1fr; gap: 48px; }
+    .testi-grid { grid-template-columns: repeat(2, 1fr); }
+    .nav-inner { padding: 0 32px; }
+    .nav-links { display: none; }
+    .footer-inner { grid-template-columns: 1fr 1fr; gap: 48px; padding: 0 32px; }
+    .footer-bottom { padding: 0 32px; }
+  }
+  @media (max-width: 900px) {
+    .heading-1 { font-size: 56px; line-height: 60px; }
+    .heading-2 { font-size: 40px; line-height: 46px; }
+    .hero { padding-top: 112px; }
+    .why, .trust, .compare, .testi, .faq, .final-cta { padding-top: 80px; padding-bottom: 80px; }
+    .why-grid, .testi-grid { grid-template-columns: 1fr; }
+    .why-left { position: static; }
+    .feature-card { position: static; padding: 32px; }
+    .feature-title { font-size: 24px; line-height: 30px; }
+    .trust-stats { grid-template-columns: 1fr; }
+    .trust-stat { border-right: none; border-bottom: 1px solid var(--line-dark); padding: 40px 16px; }
+    .trust-stat:last-child { border-bottom: none; }
+    .trust-num { font-size: 72px; line-height: 72px; }
+    .compare-row { grid-template-columns: 1fr 1fr; font-size: 14px; }
+    .compare-row > div:nth-child(n+3) { display: none; }
+    .compare-highlight { display: none; }
+    .hero .lead { padding: 0 16px; font-size: 18px; }
+    /* Narrow viewports: show full ribbon (avoid object-fit: cover cropping to a corner fragment) */
+    .hero-bg-ribbon {
+      left: 0;
+      right: 0;
+      width: 100%;
+      max-width: none;
+      height: min(52vw, 420px);
+      max-height: none;
+    }
+    .hero-bg-ribbon img {
+      object-fit: contain;
+      object-position: center bottom;
+    }
+    .final-cta-buttons { flex-direction: column; align-items: center; }
+    .footer-inner { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============== NAV ============== -->
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">
+      <img class="nav-logo" src="assets/embed_000.svg" alt="WPS Office">
+    </a>
+    <nav class="nav-links">
+      <a href="#" class="strong">Products <span class="caret"></span></a>
+      <a href="#">Download</a>
+      <a href="#" class="ai">WPS AI</a>
+      <a href="#">Pricing</a>
+      <a href="#">Learn <span class="caret"></span></a>
+      <a href="#">Support <span class="caret"></span></a>
+    </nav>
+    <div class="nav-right">
+      <a href="#" class="nav-btn primary">Download</a>
+      <a href="#" class="nav-btn ghost">Sign in</a>
+    </div>
+  </div>
+</header>
+
+<!-- ============== HERO ============== -->
+<section class="hero">
+  <div class="hero-bg-ribbon" aria-hidden="true"><img width="1920" height="900" decoding="async" fetchpriority="low" src="assets/embed_001.svg" alt=""></div>
+  <div class="container-wide hero-inner">
+    <div class="eyebrow">Trusted by millions worldwide</div>
+    <h1 class="heading-1">
+      All-in-One <span class="red-gradient">PDF</span><br>
+      Solution for Every Need.
+    </h1>
+    <p class="lead">Edit, Convert, Compress, and Sign PDFs with ease — built natively for Mac.</p>
+    <a href="#" class="cta primary">
+      <img class="cta-apple" src="assets/embed_002.svg" alt="">
+      <span>Download for macOS</span>
+    </a>
+    <div class="note">Free · macOS 11 or later · Apple Silicon &amp; Intel</div>
+  </div>
+
+  <!-- Tools marquee -->
+  <div class="marquee-wrap" data-marquee-group="hero">
+    <div class="marquee-row" data-direction="left" data-base-speed="50">
+      <div class="tool-card">
+        <div class="tool-icon red"><img src="assets/embed_003.png" alt=""></div>
+        <div class="tool-title">Edit PDF</div>
+        <div class="tool-desc">Modify text, images, and pages directly.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon blue"><img src="assets/embed_004.png" alt=""></div>
+        <div class="tool-title">Convert PDF</div>
+        <div class="tool-desc">To Word, Excel, PPT, and Images.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon yellow"><img src="assets/embed_005.png" alt=""></div>
+        <div class="tool-title">Compress PDF</div>
+        <div class="tool-desc">Reduce file size without losing quality.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon purple"><img src="assets/embed_006.png" alt=""></div>
+        <div class="tool-title">Translate PDF</div>
+        <div class="tool-desc">Instant translation into 50+ languages.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon blue"><img src="assets/embed_007.png" alt=""></div>
+        <div class="tool-title">Merge PDF</div>
+        <div class="tool-desc">Combine multiple files into one.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon red"><img src="assets/embed_008.png" alt=""></div>
+        <div class="tool-title">Extract PDF</div>
+        <div class="tool-desc">Pull out text and images.</div>
+      </div>
+    </div>
+    <div class="marquee-row" data-direction="right" data-base-speed="50">
+      <div class="tool-card">
+        <div class="tool-icon purple"><img src="assets/embed_009.png" alt=""></div>
+        <div class="tool-title">OCR PDF</div>
+        <div class="tool-desc">Turn scans into searchable text.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon green"><img src="assets/embed_010.png" alt=""></div>
+        <div class="tool-title">Protect PDF</div>
+        <div class="tool-desc">Add passwords and permissions.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon yellow"><img src="assets/embed_011.png" alt=""></div>
+        <div class="tool-title">Annotate PDF</div>
+        <div class="tool-desc">Comments, highlights, and notes.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon green"><img src="assets/embed_012.png" alt=""></div>
+        <div class="tool-title">Watermark</div>
+        <div class="tool-desc">Add text or image watermarks.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon red"><img src="assets/embed_013.png" alt=""></div>
+        <div class="tool-title">Print</div>
+        <div class="tool-desc">Reorder, rotate, and delete.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon blue"><img src="assets/embed_014.png" alt=""></div>
+        <div class="tool-title">Split PDF</div>
+        <div class="tool-desc">Extract pages into separate files.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== WHY MAC ============== -->
+<section class="why">
+  <div class="container">
+    <div class="why-grid">
+      <div class="why-left">
+        <div class="eyebrow">Why Choose Us</div>
+        <h2 class="heading-2">The Professional<br>Choice for <span class="red">Mac</span><br>Users.</h2>
+        <p class="lead">WPS PDF for Mac is engineered for high-energy productivity. We provide a comprehensive suite of tools that are not only powerful but also incredibly intuitive.</p>
+        <ul class="why-list">
+          <li><img src="assets/embed_015.svg" alt=""><span>All-in-one PDF toolkit for Mac users</span></li>
+          <li><img src="assets/embed_015.svg" alt=""><span>Seamless integration with WPS Office ecosystem</span></li>
+          <li><img src="assets/embed_015.svg" alt=""><span>Cross-platform sync for mobile and desktop</span></li>
+          <li><img src="assets/embed_015.svg" alt=""><span>Advanced OCR for scanned documents</span></li>
+        </ul>
+        <a href="#" class="cta primary">
+          <img class="cta-apple" src="assets/embed_002.svg" alt="">
+          <span>Download for macOS</span>
+        </a>
+      </div>
+
+      <div class="why-right">
+        <article class="feature-card">
+          <img class="feature-icon" src="assets/embed_016.svg" alt="">
+          <h3 class="feature-title">Secure &amp; Private</h3>
+          <p class="feature-desc">Your data is protected with enterprise-grade encryption. Local processing means your documents never leave your Mac without permission.</p>
+        </article>
+        <article class="feature-card">
+          <img class="feature-icon" src="assets/embed_017.svg" alt="">
+          <h3 class="feature-title">Lightning Fast</h3>
+          <p class="feature-desc">Process large PDFs in seconds with our Apple Silicon-optimized engine. Zero lag on high-res documents and complex edits.</p>
+        </article>
+        <article class="feature-card">
+          <img class="feature-icon" src="assets/embed_018.svg" alt="">
+          <h3 class="feature-title">High Accuracy</h3>
+          <p class="feature-desc">Preserve every detail during conversion and editing. Tables, fonts, and layouts stay pixel-perfect across formats.</p>
+        </article>
+        <article class="feature-card">
+          <img class="feature-icon" src="assets/embed_019.svg" alt="">
+          <h3 class="feature-title">Multi-Language</h3>
+          <p class="feature-desc">Full OCR support for over 50+ languages including Chinese, Japanese, Arabic, and European scripts.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== TRUST ============== -->
+<section class="trust">
+  <div class="container">
+    <div class="eyebrow">Trusted Worldwide</div>
+    <h2 class="heading-2">
+      <span class="white">Loved by millions,</span><br>
+      <span class="red">recognized</span><span class="white"> by industry leaders.</span>
+    </h2>
+
+    <div class="trust-stats">
+      <div class="trust-stat">
+        <div class="trust-num"><span>500</span><span class="unit">M+</span></div>
+        <div class="trust-label">Downloads worldwide</div>
+      </div>
+      <div class="trust-stat">
+        <div class="trust-num"><span>4.8</span><span class="unit">★</span></div>
+        <div class="trust-label">Average user rating</div>
+      </div>
+      <div class="trust-stat">
+        <div class="trust-num"><span># 1</span></div>
+        <div class="trust-label">Free Office alternative</div>
+      </div>
+    </div>
+
+    <div class="trust-cta-wrap">
+      <a href="#" class="cta primary">
+        <img class="cta-apple" src="assets/embed_002.svg" alt="">
+        <span>Download for macOS</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- 3rd-party Logo marquee -->
+  <div class="logo-marquee-wrap" data-marquee-group="trust">
+    <div class="logo-marquee-row" data-direction="left" data-base-speed="40">
+      <div class="logo-item"><img src="assets/embed_020.svg" alt="AWS"></div>
+      <div class="logo-item"><img src="assets/embed_021.svg" alt="Google Play"></div>
+      <div class="logo-item"><img src="assets/embed_022.svg" alt="CNET"></div>
+      <div class="logo-item"><img src="assets/embed_023.svg" alt="G2"></div>
+      <div class="logo-item"><img src="assets/embed_024.svg" alt="Trustpilot"></div>
+      <div class="logo-item"><img src="assets/embed_025.svg" alt="Forbes"></div>
+      <div class="logo-item"><img src="assets/embed_026.svg" alt="Featured"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== COMPARE ============== -->
+<section class="compare">
+  <div class="compare-inner">
+    <h2 class="heading-2">How we stack up against <span class="red">the rest.</span></h2>
+    <p class="lead">A side-by-side look at what makes WPS the smarter choice for Mac users.</p>
+  </div>
+  <div class="container">
+    <div class="compare-table">
+      <div class="compare-highlight"></div>
+
+      <div class="compare-row head">
+        <div>Key Features</div>
+        <div><div class="compare-head-col wps"><img src="assets/embed_027.svg" alt="WPS"><span>WPS Office</span></div></div>
+        <div><div class="compare-head-col"><img src="assets/embed_028.svg" alt="Microsoft"><span>Microsoft Office</span></div></div>
+        <div><div class="compare-head-col"><img src="assets/embed_029.svg" alt="Google Workspace"><span>Google Workspace</span></div></div>
+        <div><div class="compare-head-col"><img src="assets/embed_030.svg" alt="Adobe"><span>Adobe PDF</span></div></div>
+      </div>
+
+      <div class="compare-row">
+        <div>Free Mac DOCX / PPT</div>
+        <div><span class="compare-check"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <div><span class="compare-text">Paid Only</span></div>
+        <div><span class="compare-x"><svg viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+        <div><span class="compare-dash">—</span></div>
+      </div>
+      <div class="compare-row">
+        <div>Free PDF Reader</div>
+        <div><span class="compare-check"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <div><span class="compare-dash">—</span></div>
+        <div><span class="compare-dash">—</span></div>
+        <div><span class="compare-text">Limited</span></div>
+      </div>
+      <div class="compare-row">
+        <div>Premium PDF Tools</div>
+        <div><span class="compare-check"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <div><span class="compare-dash">—</span></div>
+        <div><span class="compare-dash">—</span></div>
+        <div><span class="compare-x"><svg viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+      </div>
+      <div class="compare-row">
+        <div>AI Integration</div>
+        <div><span class="compare-check"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <div><span class="compare-text">Paid</span></div>
+        <div><span class="compare-x"><svg viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+        <div><span class="compare-x"><svg viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+      </div>
+      <div class="compare-row">
+        <div>Cloud Storage Included</div>
+        <div><span class="compare-check"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <div><span class="compare-text">OneDrive</span></div>
+        <div><span class="compare-x"><svg viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+        <div><span class="compare-dash">—</span></div>
+      </div>
+      <div class="compare-row">
+        <div>Free Templates Library</div>
+        <div><span class="compare-check"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <div><span class="compare-dash">—</span></div>
+        <div><span class="compare-x"><svg viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+        <div><span class="compare-dash">—</span></div>
+      </div>
+      <div class="compare-row">
+        <div>Cross-Platform Available</div>
+        <div><span class="compare-check"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <div><span class="compare-text">No Linux</span></div>
+        <div><span class="compare-text">Web only</span></div>
+        <div><span class="compare-text">No Linux</span></div>
+      </div>
+    </div>
+
+    <div class="compare-cta-wrap">
+      <a href="#" class="cta primary">
+        <img class="cta-apple" src="assets/embed_002.svg" alt="">
+        <span>Download for macOS</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============== TESTIMONIALS ============== -->
+<section class="testi">
+  <div class="container">
+    <h2 class="heading-2">What Mac users are <span class="red">saying.</span></h2>
+    <div class="testi-grid">
+      <div class="testi-card in">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">Excellent compatibility, performance way above Microsoft-equivalent tools. The fact that it's a single, integrated app makes editing PDFs even more convenient than Microsoft Office.</p>
+        <div class="testi-author">
+          <div class="testi-avatar"><img src="assets/embed_031.png" alt=""></div>
+          <div><div class="testi-author-name">Ricardo De Paula</div><div class="testi-author-role">Creative Director</div></div>
+        </div>
+      </div>
+      <div class="testi-card in">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">A great app that opens all types of documents successfully. I don't have to worry about downloading a certain app every time I receive a different document from my phone.</p>
+        <div class="testi-author">
+          <div class="testi-avatar"><img src="assets/embed_032.png" alt=""></div>
+          <div><div class="testi-author-name">Nomzamo Buthelezi</div><div class="testi-author-role">Freelance Writer</div></div>
+        </div>
+      </div>
+      <div class="testi-card in">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">There is a free version. Used it, found it did what I needed. Then purchased it a few years ago. Don't use it much now that I am retired but still recommend it.</p>
+        <div class="testi-author">
+          <div class="testi-avatar"><img src="assets/embed_033.png" alt=""></div>
+          <div><div class="testi-author-name">John Stewart</div><div class="testi-author-role">Retired Engineer</div></div>
+        </div>
+      </div>
+      <div class="testi-card in">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">It helped me to do my homeworks since my Microsoft account has already expired. Finally found something that just works on my Mac.</p>
+        <div class="testi-author">
+          <div class="testi-avatar"><img src="assets/embed_034.png" alt=""></div>
+          <div><div class="testi-author-name">Mary Gwyneth Dela Peña</div><div class="testi-author-role">University Student</div></div>
+        </div>
+      </div>
+      <div class="testi-card in">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">I used WPS in creating documents like tests and worksheets as I teach science for middle school. PDF files can be opened and edited via WPS.</p>
+        <div class="testi-author">
+          <div class="testi-avatar"><img src="assets/embed_035.png" alt=""></div>
+          <div><div class="testi-author-name">Bella Rose Montero</div><div class="testi-author-role">Science Teacher</div></div>
+        </div>
+      </div>
+      <div class="testi-card in">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">Blazing fast on my M2 MacBook. The PDF editor alone is worth it — no more paying for Adobe subscriptions.</p>
+        <div class="testi-author">
+          <div class="testi-avatar"><img src="assets/embed_036.png" alt=""></div>
+          <div><div class="testi-author-name">Alex Chen</div><div class="testi-author-role">Product Designer</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-cta-wrap">
+      <a href="#" class="cta primary">
+        <img class="cta-apple" src="assets/embed_002.svg" alt="">
+        <span>Download for macOS</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FAQ ============== -->
+<section class="faq">
+  <div class="container">
+    <h2 class="heading-2">Frequently asked <span class="red">questions.</span></h2>
+    <div class="faq-list">
+      <div class="faq-item open">
+        <button class="faq-q">Is WPS Office for Mac really free? <span class="faq-toggle"><svg viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Yes. WPS Office for Mac offers a completely free version with access to Writer, Spreadsheets, Presentations, and PDF tools — no account required for basic usage. Premium features like advanced AI and additional cloud storage are available via subscription.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Is it 100% compatible with Microsoft Office files? <span class="faq-toggle"><svg viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></button>
+        <div class="faq-a"><div class="faq-a-inner">WPS Office provides excellent compatibility with .docx, .xlsx, .pptx, and .pdf files. Most documents open with perfect fidelity, including complex formatting, charts, and images.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Does it work on Apple Silicon (M1 / M2 / M3)? <span class="faq-toggle"><svg viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Yes — WPS PDF for Mac is built as a universal binary, running natively on M-series chips with optimized performance and battery efficiency.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">How is this different from Adobe Acrobat? <span class="faq-toggle"><svg viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></button>
+        <div class="faq-a"><div class="faq-a-inner">WPS offers the core PDF toolkit — edit, convert, annotate, OCR — for free, while Adobe Acrobat requires a subscription. WPS also includes Writer, Spreadsheets and Presentations in one app.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Is my data safe when using WPS? <span class="faq-toggle"><svg viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Your documents are encrypted both in transit and at rest. Local-first processing keeps sensitive files on your Mac unless you explicitly enable cloud sync.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">How do I install WPS on macOS? <span class="faq-toggle"><svg viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></button>
+        <div class="faq-a"><div class="faq-a-inner">Click the Download button, open the downloaded .dmg, drag the WPS icon to Applications and launch. No account or license key needed to get started.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FINAL CTA (rebuilt per design) ============== -->
+<section class="final-cta">
+  <div class="container">
+    <div class="wps-mark">
+      <img src="assets/embed_027.svg" alt="WPS">
+    </div>
+    <h2 class="heading-2">Get Start With <span class="red">WPS Office</span> Today</h2>
+    <p class="lead">Professional. Powerful. Free to use.</p>
+    <div class="final-cta-buttons">
+      <a href="#" class="cta primary">
+        <img class="cta-apple" src="assets/embed_002.svg" alt="">
+        <span>Download for macOS</span>
+      </a>
+      <a href="#" class="cta ghost">Learn more about Premium →</a>
+    </div>
+  </div>
+
+  <div class="final-marquee-wrap" data-marquee-group="final">
+    <div class="final-marquee-row" data-direction="left" data-base-speed="45">
+      <div class="tool-card">
+        <div class="tool-icon red"><img src="assets/embed_003.png" alt=""></div>
+        <div class="tool-title">Edit PDF</div>
+        <div class="tool-desc">Modify text, images, and pages directly.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon blue"><img src="assets/embed_004.png" alt=""></div>
+        <div class="tool-title">Convert PDF</div>
+        <div class="tool-desc">To Word, Excel, PPT, and Images.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon yellow"><img src="assets/embed_005.png" alt=""></div>
+        <div class="tool-title">Compress PDF</div>
+        <div class="tool-desc">Reduce file size without losing quality.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon purple"><img src="assets/embed_006.png" alt=""></div>
+        <div class="tool-title">Translate PDF</div>
+        <div class="tool-desc">Add electronic signatures securely.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon blue"><img src="assets/embed_007.png" alt=""></div>
+        <div class="tool-title">Merge PDF</div>
+        <div class="tool-desc">Combine multiple files into one.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-icon red"><img src="assets/embed_008.png" alt=""></div>
+        <div class="tool-title">Extract PDF</div>
+        <div class="tool-desc">Pull out text and images.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FOOTER (Figma 1:807 layout) ============== -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="#" class="nav-brand">
+        <img class="nav-brand-mark" src="assets/embed_027.svg" alt="WPS">
+        <span class="nav-brand-text">WPS Office</span>
+      </a>
+      <p>WPS SOFTWARE PTE. LTD.<br>6 RAFFLES QUAY #14-06<br>SINGAPORE(048580)</p>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="#">About us</a>
+      <a href="#">Press center</a>
+      <a href="#">Business Cooperation</a>
+      <a href="#">Contact Sales</a>
+      <a href="#">Partner</a>
+      <a href="#">Blog</a>
+      <a href="#">Pricing</a>
+      <a href="#">Template</a>
+      <a href="#">Privacy policy</a>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <a href="#">Feedback</a>
+      <a href="#">Help center</a>
+      <a href="#">WPS academy</a>
+    </div>
+    <div class="footer-col">
+      <h4>Follow us</h4>
+      <div class="footer-socials">
+        <a href="#" aria-label="Twitter">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M15.4 2h2.6l-5.7 6.5L19 18h-5.3l-4.1-5.4L4.7 18H2l6.1-7L1.7 2H7l3.7 4.9L15.4 2zm-.9 14.4h1.4L6.4 3.5H4.8l9.7 12.9z"/></svg>
+        </a>
+        <a href="#" aria-label="YouTube">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M19.6 6a2.5 2.5 0 00-1.8-1.8C16.3 4 10 4 10 4s-6.3 0-7.8.4A2.5 2.5 0 00.4 6 26 26 0 000 10c0 1.4.1 2.8.4 4.2A2.5 2.5 0 002.2 16c1.5.4 7.8.4 7.8.4s6.3 0 7.8-.4a2.5 2.5 0 001.8-1.8A26 26 0 0020 10c0-1.4-.1-2.8-.4-4zM8 13V7l5.2 3L8 13z"/></svg>
+        </a>
+        <a href="#" aria-label="Facebook">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M20 10A10 10 0 1011 19.9V12.9H8.5V10H11V8c0-2.5 1.5-3.9 3.8-3.9l1.5.2v2.6h-1.3c-1.2 0-1.6.7-1.6 1.5V10h2.7l-.4 2.9H13.4v7A10 10 0 0020 10z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-lang">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4">
+        <circle cx="8" cy="8" r="6.3"/>
+        <path d="M1.7 8h12.6M8 1.7c2 2.2 2 10.4 0 12.6M8 1.7c-2 2.2-2 10.4 0 12.6"/>
+      </svg>
+      <span>English</span>
+      <svg viewBox="0 0 16 16" fill="none" style="width:12px;height:12px;opacity:.7"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="footer-copy">Copyright © Kingsoft Office Software, All Rights Reserved.</div>
+  </div>
+</footer>
+
+<script>
+  /* =========================================================
+     Marquee — hover = slow, leave = normal, smooth transition
+     ========================================================= */
+  class Marquee {
+    constructor(row, wrap) {
+      this.row = row;
+      this.wrap = wrap;
+      this.direction = row.dataset.direction === 'right' ? 1 : -1;
+      this.baseSpeed = parseFloat(row.dataset.baseSpeed || '55');
+      this.speed = 1;
+      this.targetSpeed = 1;
+      this.x = 0;
+      this.lastT = 0;
+      this.halfWidth = 0;
+      this.paused = false;
+
+      this.clone();
+      this.measure();
+      if (this.direction === 1) this.x = -this.halfWidth;
+
+      this.bindHover();
+      this.animate = this.animate.bind(this);
+      this._raf = requestAnimationFrame(this.animate);
+
+      document.addEventListener('visibilitychange', () => {
+        this.paused = document.hidden;
+        if (!this.paused) { this.lastT = 0; this._raf = requestAnimationFrame(this.animate); }
+      });
+      window.addEventListener('resize', () => this.measure());
+    }
+    clone() {
+      const originals = Array.from(this.row.children);
+      originals.forEach(el => this.row.appendChild(el.cloneNode(true)));
+    }
+    measure() {
+      this.halfWidth = this.row.scrollWidth / 2;
+    }
+    bindHover() {
+      const slow = () => { this.targetSpeed = 0.18; };
+      const fast = () => { this.targetSpeed = 1; };
+      this.wrap.addEventListener('mouseenter', slow);
+      this.wrap.addEventListener('mouseleave', fast);
+      this.wrap.addEventListener('touchstart', slow, { passive: true });
+      this.wrap.addEventListener('touchend', fast);
+    }
+    animate(t) {
+      if (this.paused) return;
+      if (!this.lastT) this.lastT = t;
+      const dt = Math.min(0.05, (t - this.lastT) / 1000);
+      this.lastT = t;
+      this.speed += (this.targetSpeed - this.speed) * Math.min(1, dt * 5);
+      this.x += this.direction * this.baseSpeed * this.speed * dt;
+      if (this.x <= -this.halfWidth) this.x += this.halfWidth;
+      if (this.x >= 0) this.x -= this.halfWidth;
+      this.row.style.transform = `translate3d(${this.x}px, 0, 0)`;
+      this._raf = requestAnimationFrame(this.animate);
+    }
+  }
+
+  document.querySelectorAll('[data-marquee-group]').forEach(wrap => {
+    wrap.querySelectorAll('.marquee-row, .logo-marquee-row, .final-marquee-row').forEach(row => {
+      new Marquee(row, wrap);
+    });
+  });
+
+  /* Testimonial scroll-reveal */
+  const io = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('in'), i * 60);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.testi-card').forEach(el => io.observe(el));
+
+  /* FAQ accordion */
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => {
+      const item = q.parentElement;
+      const answer = item.querySelector('.faq-a');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(el => {
+        el.classList.remove('open');
+        el.querySelector('.faq-a').style.maxHeight = null;
+        const ico = el.querySelector('.faq-toggle svg path');
+        if (ico) ico.setAttribute('d', 'M7 2v10M2 7h10');
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+        const ico = item.querySelector('.faq-toggle svg path');
+        if (ico) ico.setAttribute('d', 'M3 3l8 8M11 3l-8 8');
+      }
+    });
+  });
+  const firstOpen = document.querySelector('.faq-item.open .faq-a');
+  if (firstOpen) firstOpen.style.maxHeight = firstOpen.scrollHeight + 'px';
+</script>
+</body>
+</html>

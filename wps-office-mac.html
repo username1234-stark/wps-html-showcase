@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WPS Office for Mac — All-in-One Office Suite, Designed for Apple</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --wps-red: #EE3F3F;
+    --ink: #1D1D1F;
+    --ink-2: #333333;
+    --ink-3: #6E6E73;
+    --ink-4: #86868B;
+    --bg-1: #FFFFFF;
+    --bg-2: #F5F5F7;
+    --bg-dark: #1D1D1F;
+    --hero-bg: #0F0F0F;
+    --compare-hi-bg: #FFF9F9;
+    --line: rgba(29, 29, 31, 0.08);
+    --line-2: rgba(29, 29, 31, 0.1);
+    --line-dark: rgba(255, 255, 255, 0.12);
+    --font: 'Geist', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --asset: './assets';
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font);
+    background: var(--bg-1);
+    color: var(--ink);
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; }
+  button { font-family: inherit; }
+
+  /* =========================================================
+     NAV — dark over hero, swaps to light theme after scroll
+     ========================================================= */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: 64px;
+    /* Align with hero --hero-bg */
+    background: rgba(15, 15, 15, 0.72);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    transition: background .3s var(--ease), border-color .3s var(--ease);
+  }
+  .nav-inner {
+    max-width: 1792px; height: 100%;
+    margin: 0 auto; padding: 0 64px;
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+  }
+
+  .nav-brand { display: inline-flex; align-items: center; gap: 8px; color: #fff; }
+  .nav .nav-brand { justify-self: start; }
+  .nav-logo { height: 24px; width: auto; display: block; transition: filter .3s var(--ease); }
+  .nav-brand-mark { width: 24px; height: 24px; display: block; }
+  .nav-brand-text { font-family: var(--font); font-weight: 700; font-size: 16px; letter-spacing: -0.01em; color: var(--ink); }
+
+  .nav-links { justify-self: center; display: flex; align-items: center; gap: 16px; }
+  .nav-links a {
+    padding: 8px; font-size: 14px; font-weight: 400; line-height: 22px; color: rgba(255,255,255,0.85);
+    border-radius: 8px; transition: background .2s, color .2s;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .nav-links a.strong { font-weight: 500; }
+  .nav-links a:hover { background: rgba(255,255,255,0.08); color: #fff; }
+  .nav-links .caret {
+    width: 16px; height: 16px; opacity: .7;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'><path d='M4 6l4 4 4-4' stroke='%23fff' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-size: contain; background-repeat: no-repeat; background-position: center;
+    transition: background-image .3s var(--ease);
+  }
+  .nav-links a.ai {
+    background-image: linear-gradient(180deg, #956AFF 0%, #FF2B37 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+    font-weight: 500;
+    position: relative; padding-right: 18px;
+  }
+  .nav-links a.ai::after {
+    content: ''; position: absolute; right: 6px; top: 8px;
+    width: 8px; height: 8px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' fill='none'><path d='M4 0L5 3L8 4L5 5L4 8L3 5L0 4L3 3Z' fill='%23FF2B37'/></svg>");
+    background-size: contain; background-repeat: no-repeat;
+  }
+
+  .nav-right { justify-self: end; display: flex; align-items: center; gap: 16px; }
+  .nav-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 8px 16px; border-radius: 8px;
+    font-size: 14px; font-weight: 600; line-height: 22px; transition: all .2s;
+  }
+  .nav-btn.primary { background: #fff; color: var(--ink); }
+  .nav-btn.primary:hover { background: rgba(255,255,255,0.9); }
+  .nav-btn.ghost { color: #fff; border: 1px solid rgba(255,255,255,0.35); background: transparent; }
+  .nav-btn.ghost:hover { background: rgba(255,255,255,0.08); }
+
+  /* Light nav state — triggers when hero fully scrolls out of view */
+  .nav.light {
+    background: rgba(255, 255, 255, 0.72);
+    border-bottom: 1px solid rgba(29, 29, 31, 0.08);
+  }
+  .nav.light .nav-logo { filter: brightness(0.15); }
+  .nav.light .nav-links a { color: rgba(29, 29, 31, 0.85); }
+  .nav.light .nav-links a:hover { background: rgba(29, 29, 31, 0.06); color: var(--ink); }
+  .nav.light .nav-links .caret {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'><path d='M4 6l4 4 4-4' stroke='%231D1D1F' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  }
+  .nav.light .nav-btn.primary { background: var(--ink); color: #fff; }
+  .nav.light .nav-btn.primary:hover { background: #000; }
+  .nav.light .nav-btn.ghost { color: var(--ink); border-color: rgba(29,29,31,0.2); }
+  .nav.light .nav-btn.ghost:hover { background: rgba(29,29,31,0.06); }
+
+  /* =========================================================
+     Containers
+     ========================================================= */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .container-wide { max-width: 1456px; margin: 0 auto; padding: 0 32px; }
+  .container-xwide { max-width: 1600px; margin: 0 auto; padding: 0 32px; }
+
+  /* =========================================================
+     Typography
+     ========================================================= */
+  .eyebrow {
+    font-size: 14px; font-weight: 600; line-height: 20px;
+    color: var(--wps-red); letter-spacing: 2px; text-transform: uppercase;
+  }
+  .heading-1 {
+    font-size: 88px; font-weight: 800; line-height: 88px;
+    color: var(--ink); letter-spacing: -0.02em;
+  }
+  .heading-2 {
+    font-size: 64px; font-weight: 800; line-height: 72px;
+    color: var(--ink); letter-spacing: -0.02em;
+  }
+  .heading-2 .red { color: var(--wps-red); }
+  .heading-2 .muted { color: rgba(255,255,255,0.6); }
+  .lead {
+    font-size: 20px; font-weight: 400; line-height: 1.5; color: var(--ink-3);
+  }
+  .note {
+    font-size: 14px; font-weight: 400; line-height: 20px; color: var(--ink-4);
+  }
+
+  /* =========================================================
+     CTA Buttons
+     ========================================================= */
+  .cta {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-width: 320px; height: 60px; padding: 0 32px; border-radius: 999px;
+    font-size: 20px; font-weight: 600; line-height: 24px;
+    transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+    cursor: pointer; border: none;
+  }
+  .cta.primary {
+    background: var(--wps-red); color: #fff;
+    box-shadow: 0 10px 30px rgba(238, 63, 63, 0.3);
+  }
+  .cta.primary:hover { transform: translateY(-2px); box-shadow: 0 14px 38px rgba(238, 63, 63, 0.4); }
+  .cta.light {
+    background: #fff; color: var(--ink);
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.18);
+  }
+  .cta.light:hover { transform: translateY(-2px); box-shadow: 0 14px 38px rgba(255, 255, 255, 0.28); }
+  .cta.ghost {
+    border: 1px solid var(--ink); color: var(--ink); background: transparent;
+  }
+  .cta.ghost:hover { background: rgba(0,0,0,0.04); }
+  .cta .cta-apple { width: 24px; height: 24px; }
+
+  /* =========================================================
+     HERO — dark
+     ========================================================= */
+  .hero {
+    position: relative; padding-top: 136px; padding-bottom: 0;
+    background: var(--hero-bg);
+    color: #fff;
+    overflow: hidden;
+  }
+  /* 辉光叠在纯色底 #0F0F0F 之上（底部区域） */
+  .hero-aurora {
+    position: absolute; left: 50%; bottom: 0; z-index: 0;
+    width: min(100%, 1332px);
+    max-width: 1332px;
+    transform: translateX(-50%);
+    pointer-events: none;
+    line-height: 0;
+  }
+  .hero-aurora img { width: 100%; height: auto; display: block; }
+  .hero .container-wide.hero-inner,
+  .hero .apple-marquee-wrap { position: relative; z-index: 1; }
+
+  .hero-inner { text-align: center; }
+  .hero-brand {
+    position: relative;
+    margin: 0 auto 24px;
+    height: 96px;
+    width: 100%;
+  }
+  .hero-logo-slot {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    will-change: opacity, transform;
+    animation-duration: 1.6s;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    animation-iteration-count: 1;
+    animation-fill-mode: both;
+  }
+  .hero-logo-slot img { height: 96px; width: auto; display: block; }
+  .hero-logo-slot:nth-child(1) { animation-name: hero-logo-pass;  animation-delay: 0s;   }
+  .hero-logo-slot:nth-child(2) { animation-name: hero-logo-pass;  animation-delay: 1.1s; }
+  .hero-logo-slot:nth-child(3) { animation-name: hero-logo-pass;  animation-delay: 2.2s; }
+  .hero-logo-slot:nth-child(4) { animation-name: hero-logo-pass;  animation-delay: 3.3s; }
+  .hero-logo-slot:nth-child(5) { animation-name: hero-logo-final; animation-delay: 4.4s; }
+
+  @keyframes hero-logo-pass {
+    0%   { opacity: 0; transform: translateY(16px); }
+    35%  { opacity: 1; transform: translateY(0); }
+    65%  { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-16px); }
+  }
+  @keyframes hero-logo-final {
+    0%        { opacity: 0; transform: translateY(16px); }
+    60%, 100% { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-logo-slot { animation: none; }
+    .hero-logo-slot:nth-child(5) { opacity: 1; transform: none; }
+  }
+  .hero h1 {
+    max-width: 1200px; margin: 0 auto 24px;
+    color: #fff;
+  }
+  .hero h1 .muted {
+    color: rgba(255,255,255,0.6);
+    display: block;
+  }
+  .hero .lead { max-width: 960px; margin: 0 auto 32px; color: #ffffff; }
+  .hero .cta { margin-bottom: 32px; }
+  .hero-bullets {
+    display: flex; align-items: center; gap: 32px;
+    flex-wrap: wrap; justify-content: center;
+    color: #ffffff;
+    margin-top: 0;
+  }
+  .hero-bullet {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 14px; font-weight: 400; line-height: 20px;
+    color: #ffffff;
+  }
+  .hero-bullet svg { width: 16px; height: 16px; color: #ffffff; flex-shrink: 0; }
+
+  /* Apple feature image bands — long-strip SVGs (2 rows, counter-directional scroll) */
+  .apple-marquee-wrap {
+    position: relative; margin-top: 96px; padding: 0 0 136px;
+    width: 100%;
+    mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+  }
+  .apple-row {
+    display: flex; gap: 32px; width: max-content; will-change: transform;
+  }
+  /* 两排滚动条之间的垂直间距（Figma 32） */
+  .apple-row + .apple-row { margin-top: 32px; }
+  .apple-row.row-1 img { height: 300px; width: auto; display: block; flex-shrink: 0; }
+  .apple-row.row-2 img { height: 272px; width: auto; display: block; flex-shrink: 0; }
+
+  /* =========================================================
+     WHY MAC (Sticky Stack) — bg #fff, cards #F8F8FA
+     ========================================================= */
+  .why {
+    background: #FFFFFF;
+    padding: 128px 0;
+  }
+  .why-grid {
+    display: grid; grid-template-columns: 560px 560px;
+    gap: 80px; justify-content: center; align-items: start;
+  }
+  .why-left { position: sticky; top: 128px; }
+  .why-left .eyebrow { margin-bottom: 16px; }
+  .why-left h2 { margin-bottom: 24px; }
+  .why-left .lead { margin-bottom: 48px; }
+
+  .why-list { list-style: none; padding: 0; margin: 0 0 48px; display: flex; flex-direction: column; gap: 24px; }
+  .why-list li {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 16px; font-weight: 500; line-height: 24px; color: var(--ink);
+  }
+  .why-list li img { width: 24px; height: 24px; flex-shrink: 0; }
+
+  /* Dark CTA used throughout Office page (Why / Compare) */
+  .cta.dark {
+    background: var(--ink); color: #fff; box-shadow: none;
+  }
+  .cta.dark:hover { transform: translateY(-2px); background: #000; box-shadow: none; }
+
+  .why-right { display: flex; flex-direction: column; gap: 24px; }
+  .feature-card {
+    background: #F8F8FA; border-radius: 32px;
+    padding: 48px;
+    position: sticky;
+  }
+  .feature-card:nth-child(1) { top: 128px; }
+  .feature-card:nth-child(2) { top: 152px; }
+  .feature-card:nth-child(3) { top: 176px; }
+  .feature-mark {
+    width: 64px; height: 64px;
+    display: block;
+    margin-bottom: 24px;
+  }
+  .feature-mark img { width: 64px; height: 64px; display: block; }
+  .feature-title { font-size: 32px; font-weight: 700; line-height: 40px; color: var(--ink); margin-bottom: 16px; }
+  .feature-desc  { font-size: 18px; font-weight: 400; line-height: 1.5; color: var(--ink-3); }
+
+  /* =========================================================
+     SHOWCASE — Screen 3, manual carousel (no auto-scroll)
+     ========================================================= */
+  .showcase {
+    background: #F5F5F7;
+    padding: 128px 0;
+    overflow: hidden;
+  }
+  .showcase-head { text-align: center; max-width: 1200px; margin: 0 auto 64px; padding: 0 32px; }
+  .showcase h2 { margin-bottom: 16px; }
+  .showcase h2 .red { color: var(--wps-red); }
+  .showcase .lead { margin: 0 auto; max-width: 720px; }
+
+  .carousel-viewport {
+    position: relative; width: 100%; overflow: hidden;
+    padding: 16px 0;
+    mask-image: linear-gradient(to right, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%);
+  }
+  .carousel-track {
+    display: flex; gap: 32px;
+    padding: 0 max(32px, calc((100vw - 1504px) / 2));
+    transition: transform .55s var(--ease);
+    will-change: transform;
+  }
+  .show-card {
+    width: 480px; height: 658px;
+    border-radius: 32px;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex; flex-direction: column;
+    position: relative;
+    background: #FFFFFF;
+  }
+  .show-card.dark { background: #000000; }
+  .show-card.dark .show-card-title { color: #FFFFFF; }
+  .show-card.dark .show-card-desc  { color: #6E6E73; }
+  .show-card-text {
+    padding: 48px 48px 24px;
+    flex-shrink: 0;
+  }
+  .show-card-title {
+    font-size: 32px; font-weight: 700; line-height: 40px;
+    color: var(--ink); margin-bottom: 16px; letter-spacing: -0.01em;
+  }
+  .show-card-desc {
+    font-size: 18px; font-weight: 400; line-height: 1.5;
+    color: var(--ink-3);
+  }
+  .show-card-media {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 388px;
+    overflow: hidden;
+  }
+  .show-card-media img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center top;
+    display: block;
+  }
+
+  /* Carousel controls — arrow-only, 40% opacity when disabled */
+  .carousel-controls {
+    display: flex; align-items: center; justify-content: center;
+    gap: 16px; margin-top: 48px;
+  }
+  .carousel-arrow {
+    width: 32px; height: 32px; padding: 0; border: none; background: transparent;
+    cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    transition: opacity .2s var(--ease), transform .2s var(--ease);
+  }
+  .carousel-arrow img { width: 32px; height: 32px; display: block; }
+  .carousel-arrow:hover { transform: translateY(-1px); }
+  .carousel-arrow:disabled { opacity: 0.4; cursor: default; transform: none; }
+
+  /* =========================================================
+     TRUST — dark — reused from PDF
+     ========================================================= */
+  .trust {
+    background: var(--bg-dark); color: #fff;
+    padding: 128px 0 96px;
+    text-align: center;
+    overflow: hidden;
+  }
+  .trust .eyebrow { margin-bottom: 24px; }
+  .trust h2 { color: #fff; max-width: 820px; margin: 0 auto 64px; }
+  .trust h2 .white { color: #fff; }
+
+  .trust-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--line-dark);
+    border-bottom: 1px solid var(--line-dark);
+    max-width: 1080px; margin: 0 auto;
+  }
+  .trust-stat {
+    padding: 64px 32px; text-align: center;
+    border-right: 1px solid var(--line-dark);
+  }
+  .trust-stat:last-child { border-right: none; }
+  .trust-num {
+    font-size: 104px; font-weight: 800; line-height: 104px;
+    letter-spacing: -4px;
+    background: linear-gradient(180deg, #FFFFFF 0%, #888888 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+    display: flex; justify-content: center; align-items: baseline;
+  }
+  .trust-num .unit {
+    font-size: 52px; line-height: 52px;
+    color: var(--wps-red);
+    -webkit-text-fill-color: var(--wps-red); color: var(--wps-red);
+    margin-left: 4px;
+  }
+  .trust-label {
+    font-size: 16px; font-weight: 500; line-height: 24px;
+    color: rgba(255,255,255,0.55);
+    margin-top: 24px;
+  }
+  .trust-cta-wrap { margin-top: 96px; }
+
+  .logo-marquee-wrap {
+    margin-top: 96px; padding: 24px 0;
+    mask-image: linear-gradient(to right, transparent 0, #000 8%, #000 92%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 8%, #000 92%, transparent 100%);
+  }
+  .logo-marquee-row {
+    display: flex; align-items: center; gap: 72px;
+    width: max-content; will-change: transform;
+  }
+  .logo-item {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity .3s;
+  }
+  .logo-item img { height: 90px; width: auto; display: block; }
+  .logo-item:hover { opacity: 0.95; }
+
+  /* =========================================================
+     COMPARE — white bg, pink-tinted WPS highlight
+     ========================================================= */
+  .compare {
+    background: var(--bg-1);
+    padding: 128px 0;
+  }
+  .compare-inner { text-align: center; max-width: 1200px; margin: 0 auto 64px; padding: 0 32px; }
+  .compare h2 { margin-bottom: 16px; }
+  .compare .lead { margin: 0 auto; }
+
+  .compare-table {
+    position: relative; max-width: 1080px; margin: 0 auto;
+  }
+  .compare-highlight {
+    position: absolute;
+    top: -16px; bottom: -12px;
+    left: 32%;
+    margin-left: 8px;
+    margin-right: 8px;
+    width: calc(17% - 16px);
+    background: var(--compare-hi-bg);
+    border: 1.5px solid var(--wps-red);
+    border-radius: 24px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .compare-row {
+    display: grid; grid-template-columns: 32% 17% 17% 17% 17%;
+    border-bottom: 1px solid var(--line);
+    align-items: center; min-height: 72px;
+    position: relative; z-index: 1;
+  }
+  .compare-row.head { min-height: 104px; border-bottom-color: var(--line); }
+  .compare-row:last-child { border-bottom: none; }
+  .compare-row > div { padding: 16px 8px; text-align: center; display: flex; justify-content: center; align-items: center; }
+  .compare-row > div:first-child {
+    justify-content: flex-start; padding-left: 24px;
+    font-size: 14px; font-weight: 600; line-height: 20px; color: var(--ink);
+  }
+  .compare-row.head > div:first-child {
+    font-size: 13px; font-weight: 600; line-height: 20px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .compare-head-col {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    font-size: 14px; font-weight: 600; line-height: 20px; color: var(--ink-3);
+  }
+  .compare-head-col.wps { color: var(--ink); }
+  .compare-head-col img { height: 36px; width: auto; max-width: 140px; object-fit: contain; display: block; }
+
+  .compare-check, .compare-x {
+    width: 24px; height: 24px; border-radius: 999px;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .compare-check { background: var(--wps-red); }
+  .compare-x     { background: rgba(0,0,0,0.08); }
+  .compare-check svg { width: 14px; height: 14px; color: #fff; }
+  .compare-x svg     { width: 12px; height: 12px; color: rgba(0,0,0,.4); }
+  .compare-text {
+    font-size: 14px; font-weight: 400; line-height: 20px; color: var(--ink-3);
+  }
+  .compare-dash { color: var(--ink-4); font-size: 20px; font-weight: 400; }
+
+  .compare-cta-wrap { margin-top: 64px; text-align: center; }
+
+  /* =========================================================
+     AI ASSISTANT — Screen 6, manual carousel (no auto-scroll)
+     ========================================================= */
+  .ai-sec {
+    background: var(--bg-2);
+    padding: 128px 0;
+    overflow: hidden;
+  }
+  .ai-head { text-align: center; max-width: 1200px; margin: 0 auto 64px; padding: 0 32px; }
+  .ai-sec h2 { margin-bottom: 16px; }
+  .ai-sec h2 .red { color: var(--wps-red); }
+  .ai-sec .lead { margin: 0 auto; max-width: 800px; }
+
+  .ai-card {
+    width: 480px; height: 550px;
+    background: #fff; border-radius: 32px;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex; flex-direction: column;
+    border: 1px solid rgba(0,0,0,0.04);
+  }
+  .ai-card-media {
+    height: 282px; width: 100%;
+    overflow: hidden;
+    background: var(--bg-2);
+  }
+  .ai-card-media img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center center;
+    display: block;
+  }
+  .ai-card-text {
+    padding: 32px 48px 48px; flex: 1;
+  }
+  .ai-card-title {
+    font-size: 32px; font-weight: 700; line-height: 40px;
+    color: var(--ink); margin-bottom: 16px; letter-spacing: -0.01em;
+  }
+  .ai-card-desc {
+    font-size: 18px; font-weight: 400; line-height: 1.5;
+    color: var(--ink-3);
+  }
+
+  /* =========================================================
+     FINAL CTA — left copy + right devices composite
+     Image matches Figma: 1093×1048 at x=1043, y=-206 within 1920×796 section
+     ========================================================= */
+  .final-cta {
+    background: #FFFFFF;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    height: 796px;
+  }
+  .final-cta-inner {
+    max-width: 1920px; height: 100%; margin: 0 auto;
+    position: relative;
+  }
+  .final-cta-text {
+    position: absolute; left: 180px; top: 128px; z-index: 2;
+    width: 783px;
+  }
+  .final-cta .wps-mark {
+    width: 96px; height: 96px;
+    margin: 0 0 24px;
+    display: flex; align-items: center; justify-content: flex-start;
+  }
+  .final-cta .wps-mark img { width: 96px; height: 96px; display: block; }
+  .final-cta h2 { margin-bottom: 24px; max-width: 783px; text-align: left; }
+  .final-cta h2 .red { color: var(--wps-red); }
+  .final-cta .lead { margin: 0 0 64px; max-width: 614px; }
+
+  .final-cta-buttons { display: flex; gap: 24px; margin-bottom: 24px; flex-wrap: wrap; }
+  .store-btn {
+    display: inline-flex;
+    transition: transform .2s var(--ease), opacity .2s var(--ease);
+  }
+  .store-btn:hover { transform: translateY(-2px); }
+  .store-btn img { display: block; height: 60px; width: auto; }
+
+  .final-learn {
+    display: inline-flex; align-items: center;
+    font-size: 16px; font-weight: 600; line-height: 24px;
+    color: var(--ink);
+    transition: color .2s;
+  }
+  .final-learn:hover { color: var(--wps-red); }
+
+  .final-cta-media {
+    position: absolute;
+    left: 1043px; top: -206px;
+    width: 1093px; height: 1048px;
+    pointer-events: none;
+  }
+  .final-cta-media img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  /* Responsive scaling — scale whole final-cta proportionally when viewport < 1920 */
+  @media (max-width: 1919px) {
+    .final-cta {
+      height: calc(100vw * 796 / 1920);
+      min-height: 560px;
+    }
+    .final-cta-text {
+      left: calc(100vw * 180 / 1920);
+      top: calc(100vw * 128 / 1920);
+      width: calc(100vw * 783 / 1920);
+    }
+    .final-cta-media {
+      left: calc(100vw * 1043 / 1920);
+      top: calc(100vw * -206 / 1920);
+      width: calc(100vw * 1093 / 1920);
+      height: calc(100vw * 1048 / 1920);
+    }
+  }
+
+  /* =========================================================
+     FOOTER (same as PDF)
+     ========================================================= */
+  .footer {
+    background: #fff; color: var(--ink);
+    padding: 64px 0 24px;
+    border-top: 1px solid var(--line);
+  }
+  .footer-inner {
+    max-width: 1200px; margin: 0 auto; padding: 0 64px;
+    display: grid;
+    grid-template-columns: 280px 1fr 1fr 1fr;
+    gap: 64px;
+    align-items: start;
+  }
+  .footer-brand .nav-brand { margin-bottom: 16px; color: var(--ink); }
+  .footer-brand p {
+    color: rgba(0, 0, 0, 0.6);
+    font-family: var(--font);
+    font-size: 13px; line-height: 22px; font-weight: 500;
+  }
+  .footer-col h4 {
+    font-family: var(--font);
+    font-size: 14px; font-weight: 700; line-height: 22px;
+    color: rgba(0, 0, 0, 0.7);
+    margin-bottom: 16px;
+  }
+  .footer-col a {
+    display: block; font-size: 13px; line-height: 22px; font-weight: 500;
+    color: rgba(0, 0, 0, 0.6); margin-bottom: 8px;
+    transition: color .2s;
+  }
+  .footer-col a:hover { color: var(--ink); }
+
+  .footer-socials { display: flex; gap: 16px; }
+  .footer-socials a {
+    width: 20px; height: 20px; margin-bottom: 0;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: rgba(0,0,0,0.6);
+  }
+  .footer-socials svg { width: 20px; height: 20px; display: block; }
+  .footer-socials a:hover { color: var(--ink); }
+
+  .footer-bottom {
+    max-width: 1200px; margin: 40px auto 0; padding: 0 64px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .footer-lang {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px; border-radius: 8px;
+    background: rgba(0, 0, 0, 0.06);
+    font-size: 13px; font-weight: 500; color: rgba(0, 0, 0, 0.6);
+    width: fit-content;
+  }
+  .footer-lang svg { width: 16px; height: 16px; }
+  .footer-copy {
+    font-size: 12px; font-weight: 500; line-height: 20px;
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  /* =========================================================
+     Responsive
+     ========================================================= */
+  @media (max-width: 1200px) {
+    .why-grid { grid-template-columns: 1fr 1fr; gap: 48px; }
+    .nav-inner { padding: 0 32px; }
+    .nav-links { display: none; }
+    .footer-inner { grid-template-columns: 1fr 1fr; gap: 48px; padding: 0 32px; }
+    .footer-bottom { padding: 0 32px; }
+    .carousel-track { padding: 0 32px; }
+  }
+  @media (max-width: 960px) {
+    .final-cta { height: auto; padding: 80px 0 0; }
+    .final-cta-inner { position: static; }
+    .final-cta-text { position: static; padding: 0 32px; width: auto; text-align: center; }
+    .final-cta .wps-mark { margin-left: auto; margin-right: auto; justify-content: center; }
+    .final-cta h2, .final-cta .lead { text-align: center; margin-left: auto; margin-right: auto; }
+    .final-cta-buttons { justify-content: center; }
+    .final-cta-media { position: relative; left: auto; top: auto; width: 100%; height: auto; margin-top: 48px; }
+    .final-cta-media img { width: 100%; height: auto; }
+  }
+  @media (max-width: 900px) {
+    .heading-1 { font-size: 56px; line-height: 60px; }
+    .heading-2 { font-size: 40px; line-height: 46px; }
+    .hero { padding-top: 112px; }
+    .hero .lead { padding: 0 16px; font-size: 18px; }
+    .why, .trust, .compare, .showcase, .ai-sec { padding-top: 80px; padding-bottom: 80px; }
+    .why-grid { grid-template-columns: 1fr; }
+    .why-left { position: static; }
+    .feature-card { position: static; padding: 32px; }
+    .feature-title { font-size: 24px; line-height: 30px; }
+    .trust-stats { grid-template-columns: 1fr; }
+    .trust-stat { border-right: none; border-bottom: 1px solid var(--line-dark); padding: 40px 16px; }
+    .trust-stat:last-child { border-bottom: none; }
+    .trust-num { font-size: 72px; line-height: 72px; }
+    .compare-row { grid-template-columns: 1fr 1fr; font-size: 14px; }
+    .compare-row > div:nth-child(n+3) { display: none; }
+    .compare-highlight { display: none; }
+    .show-card, .ai-card { width: 320px; }
+    .show-card { height: 520px; }
+    .ai-card { height: 460px; }
+    .show-card-media { height: 260px; }
+    .ai-card-media { height: 200px; }
+    .footer-inner { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============== NAV ============== -->
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">
+      <img class="nav-logo" src="assets/embed_000.svg" alt="WPS Office">
+    </a>
+    <nav class="nav-links">
+      <a href="#" class="strong">Products <span class="caret"></span></a>
+      <a href="#">Download</a>
+      <a href="#" class="ai">WPS AI</a>
+      <a href="#">Pricing</a>
+      <a href="#">Learn <span class="caret"></span></a>
+      <a href="#">Support <span class="caret"></span></a>
+    </nav>
+    <div class="nav-right">
+      <a href="#" class="nav-btn primary">Download</a>
+      <a href="#" class="nav-btn ghost">Sign in</a>
+    </div>
+  </div>
+</header>
+
+<!-- ============== HERO (dark) ============== -->
+<section class="hero">
+  <div class="hero-aurora" aria-hidden="true">
+    <img src="assets/embed_001.svg" alt="" decoding="async" fetchpriority="high" />
+  </div>
+  <div class="container-wide hero-inner">
+    <div class="hero-brand" aria-label="WPS Office">
+      <span class="hero-logo-slot"><img src="assets/embed_002.svg" alt=""></span>
+      <span class="hero-logo-slot"><img src="assets/embed_003.svg" alt=""></span>
+      <span class="hero-logo-slot"><img src="assets/embed_004.svg" alt=""></span>
+      <span class="hero-logo-slot"><img src="assets/embed_005.svg" alt=""></span>
+      <span class="hero-logo-slot"><img src="assets/embed_006.svg" alt=""></span>
+    </div>
+    <h1 class="heading-1">
+      All-in-One Office Suite,
+      <span class="muted">Designed for Apple.</span>
+    </h1>
+    <p class="lead">Writer, Spreadsheets, Presentations, and PDF. Performance that dwarfs the Microsoft equivalents. Built natively for Apple Silicon.</p>
+    <a href="#" class="cta light">
+      <img class="cta-apple" src="assets/embed_007.svg" alt="">
+      <span>Download for macOS</span>
+    </a>
+    <div class="hero-bullets">
+      <span class="hero-bullet">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2.5 8.5l3 3 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Professional-Grade Tools
+      </span>
+      <span class="hero-bullet">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2.5 8.5l3 3 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        100% MS Office Compatible
+      </span>
+      <span class="hero-bullet">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2.5 8.5l3 3 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Full features unlocked
+      </span>
+    </div>
+  </div>
+
+  <!-- Feature rows: 第一排 / 第二排.svg，双份衔接无限滚动 -->
+  <div class="apple-marquee-wrap" data-marquee-group="hero">
+    <div class="apple-row row-1" data-direction="left" data-base-speed="40">
+      <img src="assets/embed_008.svg" alt="">
+      <img src="assets/embed_008.svg" alt="">
+    </div>
+    <div class="apple-row row-2" data-direction="right" data-base-speed="40">
+      <img src="assets/embed_009.svg" alt="">
+      <img src="assets/embed_009.svg" alt="">
+    </div>
+  </div>
+</section>
+
+<!-- ============== WHY MAC ============== -->
+<section class="why">
+  <div class="container">
+    <div class="why-grid">
+      <div class="why-left">
+        <div class="eyebrow">Why Choose Us</div>
+        <h2 class="heading-2">The Professional<br>Choice for <span class="red">Mac</span><br>Users.</h2>
+        <p class="lead">WPS Office for Mac is engineered for high-energy productivity. We provide a comprehensive suite of tools that are not only powerful but also incredibly intuitive.</p>
+        <ul class="why-list">
+          <li><img src="assets/embed_010.svg" alt=""><span>All-in-one Office toolkit for Mac users</span></li>
+          <li><img src="assets/embed_010.svg" alt=""><span>Seamless integration with WPS Office ecosystem</span></li>
+          <li><img src="assets/embed_010.svg" alt=""><span>Cross-platform sync for mobile and desktop</span></li>
+          <li><img src="assets/embed_010.svg" alt=""><span>Advanced OCR for scanned documents</span></li>
+        </ul>
+        <a href="#" class="cta dark">
+          <img class="cta-apple" src="assets/embed_011.svg" alt="">
+          <span>Download for macOS</span>
+        </a>
+      </div>
+
+      <div class="why-right">
+        <article class="feature-card">
+          <div class="feature-mark"><img src="assets/embed_012.svg" alt=""></div>
+          <h3 class="feature-title">Native Font Rendering</h3>
+          <p class="feature-desc">WPS for Mac solves the "missing font" headache. It seamlessly maps Windows-standard fonts to macOS, ensuring your documents look identical on both platforms without layout collapse.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-mark"><img src="assets/embed_013.svg" alt=""></div>
+          <h3 class="feature-title">Stable JS Macros</h3>
+          <p class="feature-desc">While VBA often struggles on macOS, WPS JS Macros are built for the modern era. Enjoy high-performance, cross-platform automation that runs natively and reliably on your Mac.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-mark"><img src="assets/embed_014.svg" alt=""></div>
+          <h3 class="feature-title">Unified Tabbed Window</h3>
+          <p class="feature-desc">Unlike MS Office's cluttered multi-window approach on Mac, WPS organizes everything into a single browser-style window. It's cleaner, faster, and feels right at home on macOS.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== SHOWCASE (Screen 3) ============== -->
+<section class="showcase">
+  <div class="showcase-head">
+    <h2 class="heading-2">Make Busy Work <span class="red">Easy.</span></h2>
+    <p class="lead">Powerful toolkit designed for the modern professional.</p>
+  </div>
+
+  <div class="carousel-viewport" data-carousel="showcase">
+    <div class="carousel-track">
+      <div class="show-card dark">
+        <div class="show-card-text">
+          <h3 class="show-card-title">Free Access to Word, Excel, and PPT Features</h3>
+          <p class="show-card-desc">Writer, Spreadsheet, Presentation, and PDF. No more switching apps. Everything opens in one window with a tabbed interface.</p>
+        </div>
+        <div class="show-card-media"><img src="assets/embed_015.png" alt=""></div>
+      </div>
+      <div class="show-card">
+        <div class="show-card-text">
+          <h3 class="show-card-title">100% Compatibility with Flawless File Handling</h3>
+          <p class="show-card-desc">Never worry about file compatibility again. WPS Office ensures that every file opens smoothly, with no formatting issues. Your work, your way.</p>
+        </div>
+        <div class="show-card-media"><img src="assets/embed_016.png" alt=""></div>
+      </div>
+      <div class="show-card">
+        <div class="show-card-text">
+          <h3 class="show-card-title">Powerful PDF Toolkit</h3>
+          <p class="show-card-desc">Open all types of documents successfully. 100% fidelity with Microsoft Office formats.</p>
+        </div>
+        <div class="show-card-media"><img src="assets/embed_017.png" alt=""></div>
+      </div>
+      <div class="show-card">
+        <div class="show-card-text">
+          <h3 class="show-card-title">Blazing Performance</h3>
+          <p class="show-card-desc">Optimized for Apple Silicon (M1/M2/M3). Documents open in just a few seconds. 10× FASTER STARTUP.</p>
+        </div>
+        <div class="show-card-media"><img src="assets/embed_018.png" alt=""></div>
+      </div>
+      <div class="show-card">
+        <div class="show-card-text">
+          <h3 class="show-card-title">100,000+ Professional Templates</h3>
+          <p class="show-card-desc">Professional templates for resumes, reports, and presentations. Start your project with a head start.</p>
+        </div>
+        <div class="show-card-media"><img src="assets/embed_019.png" alt=""></div>
+      </div>
+      <div class="show-card">
+        <div class="show-card-text">
+          <h3 class="show-card-title">Safe and reliable WPS Cloud</h3>
+          <p class="show-card-desc">20GB free storage. Access and sync your documents across Mac, iPhone, and iPad seamlessly.</p>
+        </div>
+        <div class="show-card-media"><img src="assets/embed_020.png" alt=""></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="carousel-controls">
+    <button class="carousel-arrow prev" data-carousel-target="showcase" aria-label="Previous"><img src="assets/embed_021.svg" alt=""></button>
+    <button class="carousel-arrow next" data-carousel-target="showcase" aria-label="Next"><img src="assets/embed_022.svg" alt=""></button>
+  </div>
+</section>
+
+<!-- ============== TRUST ============== -->
+<section class="trust">
+  <div class="container">
+    <div class="eyebrow">Trusted Worldwide</div>
+    <h2 class="heading-2">
+      <span class="white">Loved by millions,</span><br>
+      <span class="red">recognized</span><span class="white"> by industry leaders.</span>
+    </h2>
+
+    <div class="trust-stats">
+      <div class="trust-stat">
+        <div class="trust-num"><span>500</span><span class="unit">M+</span></div>
+        <div class="trust-label">Downloads worldwide</div>
+      </div>
+      <div class="trust-stat">
+        <div class="trust-num"><span>4.8</span><span class="unit">★</span></div>
+        <div class="trust-label">Average user rating</div>
+      </div>
+      <div class="trust-stat">
+        <div class="trust-num"><span># 1</span></div>
+        <div class="trust-label">Free Office alternative</div>
+      </div>
+    </div>
+
+    <div class="trust-cta-wrap">
+      <a href="#" class="cta light">
+        <img class="cta-apple" src="assets/embed_007.svg" alt="">
+        <span>Download for macOS</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="logo-marquee-wrap" data-marquee-group="trust">
+    <div class="logo-marquee-row" data-direction="left" data-base-speed="40">
+      <div class="logo-item"><img src="assets/embed_023.svg" alt="AWS"></div>
+      <div class="logo-item"><img src="assets/embed_024.svg" alt="Google Play"></div>
+      <div class="logo-item"><img src="assets/embed_025.svg" alt="CNET"></div>
+      <div class="logo-item"><img src="assets/embed_026.svg" alt="G2"></div>
+      <div class="logo-item"><img src="assets/embed_027.svg" alt="Trustpilot"></div>
+      <div class="logo-item"><img src="assets/embed_028.svg" alt="Forbes"></div>
+      <div class="logo-item"><img src="assets/embed_029.svg" alt="Featured"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== COMPARE ============== -->
+<section class="compare">
+  <div class="compare-inner">
+    <h2 class="heading-2">How we stack up against <span class="red">the rest.</span></h2>
+    <p class="lead">A side-by-side look at what makes WPS the smarter choice for Mac users.</p>
+  </div>
+  <div class="container">
+    <div class="compare-table">
+      <div class="compare-highlight"></div>
+
+      <div class="compare-row head">
+        <div>Key Features</div>
+        <div><div class="compare-head-col wps"><img src="assets/embed_030.svg" alt="WPS"><span>WPS Office</span></div></div>
+        <div><div class="compare-head-col"><img src="assets/embed_031.svg" alt="Microsoft"><span>Microsoft Office</span></div></div>
+        <div><div class="compare-head-col"><img src="assets/embed_032.svg" alt="Google Workspace"><span>Google Workspace</span></div></div>
+        <div><div class="compare-head-col"><img src="assets/embed_033.svg" alt="Adobe"><span>Adobe PDF</span></div></div>
+      </div>
+
+      <div class="compare-row">
+        <div>Free Mac DOCX / PPT</div>
+        <div><span class="compare-check"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <div><span class="compare-text">Paid Only</span></div>
+        <div><span class="compare-x"><svg viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+        <div><span class="compare-dash">—</span></div>
+      </div>
+      <div class="compare-row">
+        <div>Free PDF Reader</div>
+        <div><span class="compare-check"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <div><span class="compare-dash">—</span></div>
+        <div><span class="compare-dash">—</span></div>
+        <div><span class="compare-text">Limited</span></div>
+      </div>
+      <div class="compare-row">
+        <div>Premium PDF Tools</div>
+        <div><span class="compare-check"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <div><span class="compare-dash">—</span></div>
+        <div><span class="compare-dash">—</span></div>
+        <div><span class="compare-x"><svg viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+      </div>
+      <div class="compare-row">
+        <div>AI Integration</div>
+        <div><span class="compare-check"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <div><span class="compare-text">Paid</span></div>
+        <div><span class="compare-x"><svg viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+        <div><span class="compare-x"><svg viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+      </div>
+      <div class="compare-row">
+        <div>Cloud Storage Included</div>
+        <div><span class="compare-check"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <div><span class="compare-text">OneDrive</span></div>
+        <div><span class="compare-x"><svg viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+        <div><span class="compare-dash">—</span></div>
+      </div>
+      <div class="compare-row">
+        <div>Free Templates Library</div>
+        <div><span class="compare-check"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <div><span class="compare-dash">—</span></div>
+        <div><span class="compare-x"><svg viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></div>
+        <div><span class="compare-dash">—</span></div>
+      </div>
+      <div class="compare-row">
+        <div>Cross-Platform Available</div>
+        <div><span class="compare-check"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        <div><span class="compare-text">No Linux</span></div>
+        <div><span class="compare-text">Web only</span></div>
+        <div><span class="compare-text">No Linux</span></div>
+      </div>
+    </div>
+
+    <div class="compare-cta-wrap">
+      <a href="#" class="cta dark">
+        <img class="cta-apple" src="assets/embed_011.svg" alt="">
+        <span>Download for macOS</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============== AI ASSISTANT (Screen 6) ============== -->
+<section class="ai-sec">
+  <div class="ai-head">
+    <h2 class="heading-2"><span class="red">WPS AI</span> Your Intelligent Assistant.</h2>
+    <p class="lead">Draft documents, summarize long spreadsheets, and generate presentation slides in seconds. AI is now part of your office toolkit.</p>
+  </div>
+
+  <div class="carousel-viewport" data-carousel="ai">
+    <div class="carousel-track">
+      <div class="ai-card">
+        <div class="ai-card-media"><img src="assets/embed_034.png" alt=""></div>
+        <div class="ai-card-text">
+          <h3 class="ai-card-title">Error-Free Writing with AI Spell Checker</h3>
+          <p class="ai-card-desc">Enjoy seamless writing with automatic, intelligent spell checking that enhances the clarity and correctness of your documents.</p>
+        </div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-card-media"><img src="assets/embed_035.png" alt=""></div>
+        <div class="ai-card-text">
+          <h3 class="ai-card-title">AI-Enabled Immersive Translation</h3>
+          <p class="ai-card-desc">Effortlessly overcome language barriers with AI synced translations for Word and PDF documents, ensuring seamless comprehension.</p>
+        </div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-card-media"><img src="assets/embed_036.png" alt=""></div>
+        <div class="ai-card-text">
+          <h3 class="ai-card-title">Generate and Beautify PPT with 1 click</h3>
+          <p class="ai-card-desc">Transform your ideas into stunning presentations effortlessly with the power of AI. Generate and beautify PPTs with just one click.</p>
+        </div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-card-media"><img src="assets/embed_037.png" alt=""></div>
+        <div class="ai-card-text">
+          <h3 class="ai-card-title">AI Generate Content in WPS Writer</h3>
+          <p class="ai-card-desc">Effortlessly generate high-quality content such as essays, blogs, and letters using the advanced AIGC algorithms integrated into WPS Writer.</p>
+        </div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-card-media"><img src="assets/embed_038.png" alt=""></div>
+        <div class="ai-card-text">
+          <h3 class="ai-card-title">Chat with PDF through AI</h3>
+          <p class="ai-card-desc">Unlock new insights &amp; inquiries with your PDFs like never before. Engage in seamless conversations with WPS AI as it summarizes and extracts insights from your PDFs.</p>
+        </div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-card-media"><img src="assets/embed_039.png" alt=""></div>
+        <div class="ai-card-text">
+          <h3 class="ai-card-title">Smart Photo Editing</h3>
+          <p class="ai-card-desc">Explore, view, and effortlessly edit your images with WPS Photos. Enjoy advanced photo editing features including quality enhancement, element removal, and more.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="carousel-controls">
+    <button class="carousel-arrow prev" data-carousel-target="ai" aria-label="Previous"><img src="assets/embed_021.svg" alt=""></button>
+    <button class="carousel-arrow next" data-carousel-target="ai" aria-label="Next"><img src="assets/embed_022.svg" alt=""></button>
+  </div>
+</section>
+
+<!-- ============== FINAL CTA (Screen 7) ============== -->
+<section class="final-cta">
+  <div class="final-cta-inner">
+    <div class="final-cta-text">
+      <div class="wps-mark"><img src="assets/embed_030.svg" alt="WPS"></div>
+      <h2 class="heading-2">Get Start With<br><span class="red">WPS Office</span> Today</h2>
+      <p class="lead">Professional. Powerful. Free to use. Andeamless Across All Devices.</p>
+
+      <div class="final-cta-buttons">
+        <a href="#" class="store-btn" aria-label="Download on the Mac App Store"><img src="assets/embed_040.svg" alt="Download on the Mac App Store"></a>
+        <a href="#" class="store-btn" aria-label="Download on the App Store"><img src="assets/embed_041.svg" alt="Download on the App Store"></a>
+      </div>
+
+      <a href="#" class="final-learn">Learn more about Premium →</a>
+    </div>
+
+    <div class="final-cta-media">
+      <img src="assets/embed_042.png" alt="WPS Office on iMac, iPad and iPhone">
+    </div>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="#" class="nav-brand">
+        <img class="nav-brand-mark" src="assets/embed_030.svg" alt="WPS">
+        <span class="nav-brand-text">WPS Office</span>
+      </a>
+      <p>WPS SOFTWARE PTE. LTD.<br>6 RAFFLES QUAY #14-06<br>SINGAPORE(048580)</p>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="#">About us</a>
+      <a href="#">Press center</a>
+      <a href="#">Business Cooperation</a>
+      <a href="#">Contact Sales</a>
+      <a href="#">Partner</a>
+      <a href="#">Blog</a>
+      <a href="#">Pricing</a>
+      <a href="#">Template</a>
+      <a href="#">Privacy policy</a>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <a href="#">Feedback</a>
+      <a href="#">Help center</a>
+      <a href="#">WPS academy</a>
+    </div>
+    <div class="footer-col">
+      <h4>Follow us</h4>
+      <div class="footer-socials">
+        <a href="#" aria-label="Twitter">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M15.4 2h2.6l-5.7 6.5L19 18h-5.3l-4.1-5.4L4.7 18H2l6.1-7L1.7 2H7l3.7 4.9L15.4 2zm-.9 14.4h1.4L6.4 3.5H4.8l9.7 12.9z"/></svg>
+        </a>
+        <a href="#" aria-label="YouTube">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M19.6 6a2.5 2.5 0 00-1.8-1.8C16.3 4 10 4 10 4s-6.3 0-7.8.4A2.5 2.5 0 00.4 6 26 26 0 000 10c0 1.4.1 2.8.4 4.2A2.5 2.5 0 002.2 16c1.5.4 7.8.4 7.8.4s6.3 0 7.8-.4a2.5 2.5 0 001.8-1.8A26 26 0 0020 10c0-1.4-.1-2.8-.4-4zM8 13V7l5.2 3L8 13z"/></svg>
+        </a>
+        <a href="#" aria-label="Facebook">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M20 10A10 10 0 1011 19.9V12.9H8.5V10H11V8c0-2.5 1.5-3.9 3.8-3.9l1.5.2v2.6h-1.3c-1.2 0-1.6.7-1.6 1.5V10h2.7l-.4 2.9H13.4v7A10 10 0 0020 10z"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-lang">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4">
+        <circle cx="8" cy="8" r="6.3"/>
+        <path d="M1.7 8h12.6M8 1.7c2 2.2 2 10.4 0 12.6M8 1.7c-2 2.2-2 10.4 0 12.6"/>
+      </svg>
+      <span>English</span>
+      <svg viewBox="0 0 16 16" fill="none" style="width:12px;height:12px;opacity:.7"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="footer-copy">Copyright © Kingsoft Office Software, All Rights Reserved.</div>
+  </div>
+</footer>
+
+<script>
+  /* =========================================================
+     Marquee — hover = slow, leave = normal, smooth transition
+     (shared across hero, showcase, ai-sec, trust)
+     ========================================================= */
+  class Marquee {
+    constructor(row, wrap, opts = {}) {
+      this.row = row;
+      this.wrap = wrap;
+      this.direction = row.dataset.direction === 'right' ? 1 : -1;
+      this.baseSpeed = parseFloat(row.dataset.baseSpeed || '50');
+      this.speed = 1;
+      this.targetSpeed = 1;
+      this.x = 0;
+      this.lastT = 0;
+      this.halfWidth = 0;
+      this.paused = false;
+      this.hoverSlow = opts.hoverSlow !== false;
+
+      this.clone();
+      this.measure();
+      if (this.direction === 1) this.x = -this.halfWidth;
+
+      if (this.hoverSlow) this.bindHover();
+      this.animate = this.animate.bind(this);
+      this._raf = requestAnimationFrame(this.animate);
+
+      document.addEventListener('visibilitychange', () => {
+        this.paused = document.hidden;
+        if (!this.paused) { this.lastT = 0; this._raf = requestAnimationFrame(this.animate); }
+      });
+      window.addEventListener('resize', () => this.measure());
+    }
+    clone() {
+      const originals = Array.from(this.row.children);
+      originals.forEach(el => this.row.appendChild(el.cloneNode(true)));
+    }
+    measure() {
+      // flex `gap` breaks scrollWidth/2 — period = first N/2 children + gaps between them
+      const kids = this.row.children;
+      if (this.row.classList.contains('apple-row') && kids.length >= 2) {
+        const halfN = kids.length / 2;
+        const g =
+          parseFloat(getComputedStyle(this.row).columnGap) ||
+          parseFloat(getComputedStyle(this.row).gap) ||
+          0;
+        let w = 0;
+        for (let i = 0; i < halfN; i++) {
+          w += kids[i].getBoundingClientRect().width;
+        }
+        w += g * Math.max(0, halfN - 1);
+        this.halfWidth = w;
+        return;
+      }
+      this.halfWidth = this.row.scrollWidth / 2;
+    }
+    bindHover() {
+      const slow = () => { this.targetSpeed = 0.18; };
+      const fast = () => { this.targetSpeed = 1; };
+      this.wrap.addEventListener('mouseenter', slow);
+      this.wrap.addEventListener('mouseleave', fast);
+      this.wrap.addEventListener('touchstart', slow, { passive: true });
+      this.wrap.addEventListener('touchend', fast);
+    }
+    animate(t) {
+      if (this.paused) return;
+      if (!this.lastT) this.lastT = t;
+      const dt = Math.min(0.05, (t - this.lastT) / 1000);
+      this.lastT = t;
+      this.speed += (this.targetSpeed - this.speed) * Math.min(1, dt * 5);
+      this.x += this.direction * this.baseSpeed * this.speed * dt;
+      if (this.x <= -this.halfWidth) this.x += this.halfWidth;
+      if (this.x >= 0) this.x -= this.halfWidth;
+      this.row.style.transform = `translate3d(${this.x}px, 0, 0)`;
+      this._raf = requestAnimationFrame(this.animate);
+    }
+  }
+
+  document.querySelectorAll('[data-marquee-group]').forEach(wrap => {
+    const group = wrap.dataset.marqueeGroup;
+    wrap.querySelectorAll('.apple-row, .logo-marquee-row').forEach(row => {
+      new Marquee(row, wrap, { hoverSlow: group !== 'hero' });
+    });
+  });
+
+  /* =========================================================
+     Manual carousels (Showcase + AI) — arrow-only, no autoplay
+     ========================================================= */
+  class ManualCarousel {
+    constructor(viewport, prevBtn, nextBtn) {
+      this.viewport = viewport;
+      this.track = viewport.querySelector('.carousel-track');
+      this.cards = Array.from(this.track.children);
+      this.prevBtn = prevBtn;
+      this.nextBtn = nextBtn;
+      this.index = 0;
+      this.gap = 32;
+      this.cardWidth = 480;
+
+      this.prevBtn.addEventListener('click', () => this.go(-1));
+      this.nextBtn.addEventListener('click', () => this.go(1));
+      window.addEventListener('resize', () => this.update());
+      this.update();
+    }
+    measuredCardWidth() {
+      const first = this.cards[0];
+      if (!first) return this.cardWidth;
+      const w = first.getBoundingClientRect().width;
+      return w > 0 ? w : this.cardWidth;
+    }
+    getPadding() {
+      const cs = getComputedStyle(this.track);
+      return {
+        left: parseFloat(cs.paddingLeft) || 0,
+        right: parseFloat(cs.paddingRight) || 0,
+      };
+    }
+    // Total track width = padL + N*cardW + (N-1)*gap + padR.
+    // Computed manually instead of via scrollWidth because flex containers
+    // often report scrollWidth without padding-right on overflow.
+    trackWidth() {
+      const n = this.cards.length;
+      const cw = this.measuredCardWidth();
+      const p = this.getPadding();
+      return p.left + n * cw + Math.max(0, n - 1) * this.gap + p.right;
+    }
+    maxOffset() {
+      return Math.max(0, this.trackWidth() - this.viewport.clientWidth);
+    }
+    visibleCount() {
+      const p = this.getPadding();
+      const inner = this.viewport.clientWidth - p.left - p.right;
+      const cw = this.measuredCardWidth();
+      return Math.max(1, Math.floor((inner + this.gap) / (cw + this.gap)));
+    }
+    pageStep() {
+      return this.visibleCount() * (this.measuredCardWidth() + this.gap);
+    }
+    get maxIndex() {
+      const step = this.pageStep();
+      return step > 0 ? Math.max(0, Math.ceil(this.maxOffset() / step)) : 0;
+    }
+    go(delta) {
+      const next = Math.min(this.maxIndex, Math.max(0, this.index + delta));
+      if (next === this.index) return;
+      this.index = next;
+      this.update();
+    }
+    update() {
+      if (this.index > this.maxIndex) this.index = this.maxIndex;
+      // Snap final offset to maxOffset so the right gap at end
+      // equals the track's padding-right (= padding-left = initial first-card left gap).
+      const offset = Math.min(this.index * this.pageStep(), this.maxOffset());
+      this.track.style.transform = `translate3d(${-offset}px, 0, 0)`;
+      this.prevBtn.disabled = this.index <= 0;
+      this.nextBtn.disabled = this.index >= this.maxIndex;
+    }
+  }
+
+  document.querySelectorAll('[data-carousel]').forEach(viewport => {
+    const key = viewport.dataset.carousel;
+    const prev = document.querySelector(`.carousel-arrow.prev[data-carousel-target="${key}"]`);
+    const next = document.querySelector(`.carousel-arrow.next[data-carousel-target="${key}"]`);
+    if (prev && next) new ManualCarousel(viewport, prev, next);
+  });
+
+  /* =========================================================
+     Nav: swap to light theme after hero fully scrolls out of view
+     ========================================================= */
+  const heroEl = document.querySelector('.hero');
+  const navEl = document.querySelector('.nav');
+  if (heroEl && navEl) {
+    const navHeight = 64;
+    const onScroll = () => {
+      const heroBottom = heroEl.getBoundingClientRect().bottom;
+      if (heroBottom <= navHeight) navEl.classList.add('light');
+      else navEl.classList.remove('light');
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+</script>
+</body>
+</html>
